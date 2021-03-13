@@ -1,0 +1,3 @@
+mutation SendValidationEmail($usernameOrEmail: String!) {
+  sendValidationEmail(usernameOrEmail: $usernameOrEmail)
+}

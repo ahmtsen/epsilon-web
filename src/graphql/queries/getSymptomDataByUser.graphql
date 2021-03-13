@@ -1,0 +1,12 @@
+query GetSymptomDataByUser($symptom: String!) {
+  getSymptomDataByUser(symptom: $symptom) {
+    errors {
+      ...ErrorFragment
+    }
+    data {
+      id
+      timestamp
+      value
+    }
+  }
+}

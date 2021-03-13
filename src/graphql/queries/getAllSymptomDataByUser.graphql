@@ -1,0 +1,15 @@
+query GetAllSymptomDataByUser {
+  getAllSymptomDataByUser {
+    errors {
+      ...ErrorFragment
+    }
+    symptoms {
+      id
+      timestamp
+      temperature
+      heartRate
+      bloodOxygen
+      respirationRate
+    }
+  }
+}

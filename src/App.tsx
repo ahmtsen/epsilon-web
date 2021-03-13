@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Redirect, Route, Router, Switch } from "react-router";
+import { ChangePassword } from "./pages/change-password";
+import { Dashboard } from "./pages/dashboard";
+import { ForgotPassword } from "./pages/forgot-password";
+import { Login } from "./pages/login";
+import { Register } from "./pages/register";
+import { ValidateEmail } from "./pages/validate-email";
+import { createBrowserHistory } from "history";
+import { createClient, Provider } from "urql";
+import { createUrqlClient } from "./utils/createUrqlClient";
+import { ThemeProvider } from "@material-ui/styles";
+import theme from "./utils/theme";
+import { Table } from "./pages/table";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Provider value={createClient(createUrqlClient())}>
+        <Router history={createBrowserHistory()}>
+          <Switch>
+            <>
+              <Route exact path="/">
+                <Redirect to="/dashboard" />
+              </Route>
+              <Route path="/dashboard">
+                <Dashboard />
+              </Route>
+              <Route path="/login">
+                <Login />
+              </Route>
+              <Route path="/register">
+                <Register />
+              </Route>
+              <Route path="/validate-email">
+                <ValidateEmail />
+              </Route>
+              <Route path="/forgot-password">
+                <ForgotPassword />
+              </Route>
+              <Route path="/change-password">
+                <ChangePassword />
+              </Route>
+              <Route path="/table">
+                <Table />
+              </Route>
+            </>
+          </Switch>
+        </Router>
+      </Provider>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

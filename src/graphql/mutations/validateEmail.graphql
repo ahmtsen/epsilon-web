@@ -1,0 +1,5 @@
+mutation ValidateEmail($token: String!) {
+  validateEmail(token: $token) {
+    ...UserResponseFragment
+  }
+}
