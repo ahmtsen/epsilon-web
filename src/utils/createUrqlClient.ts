@@ -1,9 +1,9 @@
 import { useHistory } from "react-router";
-import { dedupExchange, Exchange, fetchExchange } from "urql";
+import { ClientOptions, dedupExchange, Exchange, fetchExchange } from "urql";
 import { pipe, tap } from "wonka";
 
 const errorExchange: Exchange = ({ forward }) => (ops$) => {
-  let router = useHistory();
+  const router = useHistory();
   return pipe(
     forward(ops$),
     tap(({ error }) => {
@@ -16,7 +16,7 @@ const errorExchange: Exchange = ({ forward }) => (ops$) => {
   );
 };
 
-export const createUrqlClient = () => {
+export const createUrqlClient = (): ClientOptions => {
   return {
     url: "http://localhost:5000/graphql",
     fetchOptions: {

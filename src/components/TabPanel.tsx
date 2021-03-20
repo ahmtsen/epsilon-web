@@ -3,11 +3,11 @@ import React from "react";
 
 interface TabPanelProps {
   children?: React.ReactNode;
-  index: any;
-  value: any;
+  index: number;
+  value: number;
 }
 
-export function TabPanel(props: TabPanelProps) {
+export const TabPanel: React.FC<TabPanelProps> = (props) => {
   const { children, value, index, ...other } = props;
 
   return (
@@ -21,4 +21,4 @@ export function TabPanel(props: TabPanelProps) {
       {value === index && <Box>{children}</Box>}
     </div>
   );
-}
+};

@@ -1,3 +1,3 @@
-export const isServer = () => {
+export const isServer = (): boolean => {
   return typeof window === "undefined";
 };

@@ -5,17 +5,17 @@ import {
   createStyles,
   Grid,
   makeStyles,
-  Theme
+  Theme,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useGetSymptomDataByUserQuery } from "../generated/graphql";
-import { calculateStats } from "../utils/calculateStats";
-import { Stats, Symptoms } from "../utils/types";
+import { Symptoms } from "../utils/types";
 import Graph from "./Graph";
 interface SymptomLayoutProps {
   symptom: Symptoms;
   title: string;
   unit: string;
+  thresholds: number[];
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,19 +31,18 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
   symptom,
   title,
   unit,
+  thresholds,
 }) => {
   const classes = useStyles();
-  const [stats, setStats] = useState<Stats>();
-  const [symptomData, setSymptomData] = useState<any[][]>();
+  const [symptomData, setSymptomData] = useState<unknown[][]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [range, setRange] = useState(0);
   const [{ fetching, data }] = useGetSymptomDataByUserQuery({
     variables: { symptom: symptom },
   });
-
+  const DATA_RANGE = 50;
   useEffect(() => {
     if (!fetching && data?.getSymptomDataByUser.data) {
-      setStats(calculateStats(data));
       const sorted = data.getSymptomDataByUser.data.sort(
         (a, b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -52,11 +51,10 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
       setSymptomData(datas);
       setIsLoading(false);
       const _range =
-        new Date(datas![datas!.length - 1][0]).getTime() -
-        (datas!.length - 100 < 0
-          ? new Date(datas![0][0]).getTime()
-          : new Date(datas![datas!.length - 100][0]).getTime());
-      console.log(_range);
+        new Date(datas[datas.length - 1][0]).getTime() -
+        (datas.length - DATA_RANGE < 0
+          ? new Date(datas[0][0]).getTime()
+          : new Date(datas[datas.length - DATA_RANGE][0]).getTime());
       setRange(-1 * _range);
     }
   }, [fetching, data]);
@@ -74,32 +72,31 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
       <Grid container spacing={3}>
         <Grid item lg={12} md={12} xl={12} xs={12}>
           <Graph
-            title={title}
             options={{
               id: "chart_" + symptom,
-              chart: {
-                events: {
-                  beforeZoom: function (ctx: any) {
-                    ctx.w.config.xaxis.range = undefined;
-                  },
+              title: {
+                text: title,
+                style: {
+                  fontSize: "30px",
+                  fontWeight: "bold",
+                  color: "#263238",
                 },
               },
               annotations: {
-                yaxis: [
-                  {
-                    y: 38,
-                    borderColor: '#FF0000',
+                yaxis: thresholds?.map((x) => {
+                  return {
+                    y: x,
+                    borderColor: "#FF0000",
                     label: {
-                      borderColor: '#FF0000',
+                      borderColor: "#FF0000",
                       style: {
-                        color: '#fff',
-                        background: '#FF0000',
-                        fontSize:'15px'
+                        color: "#fff",
+                        background: "#FF0000",
+                        fontSize: "15px",
                       },
-                      text: 'Threshold'
-                    }
-                  }
-                ],
+                    },
+                  };
+                }),
               },
               xaxis: {
                 type: "datetime",
@@ -108,10 +105,15 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
               stroke: {
                 curve: "smooth",
               },
-              colors: ["#000000"],
+              colors: ["#0c458a"],
               tooltip: {
                 x: {
                   format: "dd MMM yyyy hh:mm",
+                },
+                y: {
+                  formatter: function (value: string) {
+                    return value + " " + unit;
+                  },
                 },
               },
             }}

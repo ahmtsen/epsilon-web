@@ -1,5 +1,5 @@
 import { Box, Button, Container, Typography } from "@material-ui/core";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { TopBar } from "../components/TopBar";
 import { FieldError, useValidateEmailMutation } from "../generated/graphql";
@@ -8,11 +8,11 @@ export const ValidateEmail: React.FC = () => {
   const [, validateEmail] = useValidateEmailMutation();
   const [error, setError] = useState<FieldError | null>(null);
   const [success, setSuccess] = useState(false);
-  let { token } = useParams() as {
+  const { token } = useParams() as {
     token: string;
   };
 
-  const validation = useRef<Function>(async () => {
+  const validation = useRef(async () => {
     const response = await validateEmail({
       token: token,
     });
@@ -29,7 +29,7 @@ export const ValidateEmail: React.FC = () => {
     validation.current();
   }, []);
 
-  let body: any = null;
+  let body: ReactElement;
 
   if (error !== null) {
     body = (
@@ -40,9 +40,7 @@ export const ValidateEmail: React.FC = () => {
         <Typography>{error.message}</Typography>
       </Box>
     );
-  }
-
-  if (error === null && success) {
+  } else if (error === null && success) {
     body = (
       <Box>
         <Typography variant="h4">Success</Typography>
@@ -57,6 +55,13 @@ export const ValidateEmail: React.FC = () => {
             sign in
           </Button>
         </Box>
+      </Box>
+    );
+  } else {
+    body = (
+      <Box>
+        <Typography variant="h4">Error</Typography>
+        <Typography>Error</Typography>
       </Box>
     );
   }

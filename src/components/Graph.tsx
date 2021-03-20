@@ -1,13 +1,13 @@
-import { Box, Card, CardHeader, Divider } from "@material-ui/core";
+import { Box, Card, Divider } from "@material-ui/core";
 import React from "react";
 import Chart from "react-apexcharts";
+import PropTypes from "prop-types";
 interface GraphProps {
-  title: string;
-  options: object;
-  series: any[];
+  options: Record<string, unknown>;
+  series: unknown[];
 }
 
-const Graph: React.FC<GraphProps> = ({ title, options, series }) => {
+const Graph: React.FC<GraphProps> = ({ options, series }) => {
   return (
     <Card>
       <Divider />
@@ -19,3 +19,8 @@ const Graph: React.FC<GraphProps> = ({ title, options, series }) => {
 };
 
 export default Graph;
+
+Graph.propTypes = {
+  options: PropTypes.any.isRequired,
+  series: PropTypes.arrayOf(PropTypes.any).isRequired,
+};

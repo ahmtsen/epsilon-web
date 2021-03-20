@@ -1,0 +1,13 @@
+query GetUserThreshold {
+  getUserThreshold {
+    id
+    temperature
+    bloodOxygen
+    respirationRateMin
+    respirationRateMax
+    cough
+    heartRateMin
+    heartRateMax
+    calculateCoughTresholdStarted
+  }
+}

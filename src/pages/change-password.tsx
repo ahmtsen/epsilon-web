@@ -22,7 +22,7 @@ export const ChangePassword: React.FC = () => {
   const router = useHistory();
   const [, changePassword] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState("");
-  let { token } = useParams() as {
+  const { token } = useParams() as {
     token: string;
   };
   return (

@@ -1,0 +1,10 @@
+mutation CreateQuestionnaire($input: CreateQuestionnaireInput!) {
+  createQuestionnaire(input: $input) {
+    errors {
+      ...ErrorFragment
+    }
+    user {
+      ...UserFragment
+    }
+  }
+}

@@ -19,9 +19,15 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
+  getUserThreshold: Threshold;
   getSymptomDataByUser: SymptomResponse;
   getAllSymptomDataByUser: SymptomResponse;
   getQuestionnaireDataByUser: QuestionnaireResponse;
+};
+
+
+export type QueryGetUserThresholdArgs = {
+  userId?: Maybe<Scalars['Float']>;
 };
 
 
@@ -37,7 +43,7 @@ export type QueryGetAllSymptomDataByUserArgs = {
 
 
 export type QueryGetQuestionnaireDataByUserArgs = {
-  userId: Scalars['Float'];
+  userId?: Maybe<Scalars['Float']>;
 };
 
 export type User = {
@@ -112,10 +118,10 @@ export type Questionnaire = {
   __typename?: 'Questionnaire';
   id: Scalars['Float'];
   timestamp: Scalars['String'];
-  question1: Scalars['Boolean'];
-  question2?: Maybe<Scalars['Float']>;
+  question1: Scalars['String'];
+  question2?: Maybe<Scalars['String']>;
   question3?: Maybe<Scalars['Boolean']>;
-  question4?: Maybe<Scalars['Boolean']>;
+  question4?: Maybe<Scalars['String']>;
   question5?: Maybe<Scalars['String']>;
   question6?: Maybe<Scalars['Boolean']>;
   result: Scalars['Boolean'];
@@ -203,10 +209,10 @@ export type SymptomInput = {
 
 export type CreateQuestionnaireInput = {
   timestamp: Scalars['DateTime'];
-  question1: Scalars['Boolean'];
-  question2?: Maybe<Scalars['Float']>;
+  question1: Scalars['String'];
+  question2?: Maybe<Scalars['String']>;
   question3?: Maybe<Scalars['Boolean']>;
-  question4?: Maybe<Scalars['Boolean']>;
+  question4?: Maybe<Scalars['String']>;
   question5?: Maybe<Scalars['String']>;
   question6?: Maybe<Scalars['Boolean']>;
   result: Scalars['Boolean'];
@@ -245,6 +251,25 @@ export type ChangePasswordMutation = (
   & { changePassword: (
     { __typename?: 'UserResponse' }
     & UserResponseFragmentFragment
+  ) }
+);
+
+export type CreateQuestionnaireMutationVariables = Exact<{
+  input: CreateQuestionnaireInput;
+}>;
+
+
+export type CreateQuestionnaireMutation = (
+  { __typename?: 'Mutation' }
+  & { createQuestionnaire: (
+    { __typename?: 'QuestionnaireResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & ErrorFragmentFragment
+    )>>, user?: Maybe<(
+      { __typename?: 'User' }
+      & UserFragmentFragment
+    )> }
   ) }
 );
 
@@ -333,6 +358,23 @@ export type GetAllSymptomDataByUserQuery = (
   ) }
 );
 
+export type GetQuestionnaireDataByUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetQuestionnaireDataByUserQuery = (
+  { __typename?: 'Query' }
+  & { getQuestionnaireDataByUser: (
+    { __typename?: 'QuestionnaireResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & ErrorFragmentFragment
+    )>>, questionnaires?: Maybe<Array<(
+      { __typename?: 'Questionnaire' }
+      & Pick<Questionnaire, 'id' | 'timestamp' | 'question1' | 'question2' | 'question3' | 'question4' | 'question5' | 'question6' | 'result'>
+    )>> }
+  ) }
+);
+
 export type GetSymptomDataByUserQueryVariables = Exact<{
   symptom: Scalars['String'];
 }>;
@@ -349,6 +391,17 @@ export type GetSymptomDataByUserQuery = (
       { __typename?: 'SymptomData' }
       & Pick<SymptomData, 'id' | 'timestamp' | 'value'>
     )>> }
+  ) }
+);
+
+export type GetUserThresholdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserThresholdQuery = (
+  { __typename?: 'Query' }
+  & { getUserThreshold: (
+    { __typename?: 'Threshold' }
+    & Pick<Threshold, 'id' | 'temperature' | 'bloodOxygen' | 'respirationRateMin' | 'respirationRateMax' | 'cough' | 'heartRateMin' | 'heartRateMax' | 'calculateCoughTresholdStarted'>
   ) }
 );
 
@@ -396,7 +449,24 @@ export const ChangePasswordDocument = gql`
 
 export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
-};
+}
+export const CreateQuestionnaireDocument = gql`
+    mutation CreateQuestionnaire($input: CreateQuestionnaireInput!) {
+  createQuestionnaire(input: $input) {
+    errors {
+      ...ErrorFragment
+    }
+    user {
+      ...UserFragment
+    }
+  }
+}
+    ${ErrorFragmentFragmentDoc}
+${UserFragmentFragmentDoc}`;
+
+export function useCreateQuestionnaireMutation() {
+  return Urql.useMutation<CreateQuestionnaireMutation, CreateQuestionnaireMutationVariables>(CreateQuestionnaireDocument);
+}
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)
@@ -405,7 +475,7 @@ export const ForgotPasswordDocument = gql`
 
 export function useForgotPasswordMutation() {
   return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
-};
+}
 export const LoginDocument = gql`
     mutation Login($usernameOrEmail: String!, $password: String!) {
   login(usernameOrEmail: $usernameOrEmail, password: $password) {
@@ -416,7 +486,7 @@ export const LoginDocument = gql`
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
-};
+}
 export const LogoutDocument = gql`
     mutation Logout {
   logout
@@ -425,7 +495,7 @@ export const LogoutDocument = gql`
 
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
-};
+}
 export const RegisterDocument = gql`
     mutation Register($options: RegisterInput!) {
   register(options: $options) {
@@ -436,7 +506,7 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
-};
+}
 export const SendValidationEmailDocument = gql`
     mutation SendValidationEmail($usernameOrEmail: String!) {
   sendValidationEmail(usernameOrEmail: $usernameOrEmail)
@@ -445,7 +515,7 @@ export const SendValidationEmailDocument = gql`
 
 export function useSendValidationEmailMutation() {
   return Urql.useMutation<SendValidationEmailMutation, SendValidationEmailMutationVariables>(SendValidationEmailDocument);
-};
+}
 export const ValidateEmailDocument = gql`
     mutation ValidateEmail($token: String!) {
   validateEmail(token: $token) {
@@ -456,7 +526,7 @@ export const ValidateEmailDocument = gql`
 
 export function useValidateEmailMutation() {
   return Urql.useMutation<ValidateEmailMutation, ValidateEmailMutationVariables>(ValidateEmailDocument);
-};
+}
 export const GetAllSymptomDataByUserDocument = gql`
     query GetAllSymptomDataByUser {
   getAllSymptomDataByUser {
@@ -477,7 +547,31 @@ export const GetAllSymptomDataByUserDocument = gql`
 
 export function useGetAllSymptomDataByUserQuery(options: Omit<Urql.UseQueryArgs<GetAllSymptomDataByUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetAllSymptomDataByUserQuery>({ query: GetAllSymptomDataByUserDocument, ...options });
-};
+}
+export const GetQuestionnaireDataByUserDocument = gql`
+    query GetQuestionnaireDataByUser {
+  getQuestionnaireDataByUser {
+    errors {
+      ...ErrorFragment
+    }
+    questionnaires {
+      id
+      timestamp
+      question1
+      question2
+      question3
+      question4
+      question5
+      question6
+      result
+    }
+  }
+}
+    ${ErrorFragmentFragmentDoc}`;
+
+export function useGetQuestionnaireDataByUserQuery(options: Omit<Urql.UseQueryArgs<GetQuestionnaireDataByUserQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetQuestionnaireDataByUserQuery>({ query: GetQuestionnaireDataByUserDocument, ...options });
+}
 export const GetSymptomDataByUserDocument = gql`
     query GetSymptomDataByUser($symptom: String!) {
   getSymptomDataByUser(symptom: $symptom) {
@@ -495,7 +589,26 @@ export const GetSymptomDataByUserDocument = gql`
 
 export function useGetSymptomDataByUserQuery(options: Omit<Urql.UseQueryArgs<GetSymptomDataByUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetSymptomDataByUserQuery>({ query: GetSymptomDataByUserDocument, ...options });
-};
+}
+export const GetUserThresholdDocument = gql`
+    query GetUserThreshold {
+  getUserThreshold {
+    id
+    temperature
+    bloodOxygen
+    respirationRateMin
+    respirationRateMax
+    cough
+    heartRateMin
+    heartRateMax
+    calculateCoughTresholdStarted
+  }
+}
+    `;
+
+export function useGetUserThresholdQuery(options: Omit<Urql.UseQueryArgs<GetUserThresholdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetUserThresholdQuery>({ query: GetUserThresholdDocument, ...options });
+}
 export const MeDocument = gql`
     query Me {
   me {
@@ -506,4 +619,4 @@ export const MeDocument = gql`
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
-};
+}

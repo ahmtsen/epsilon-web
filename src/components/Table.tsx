@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Paper from "@material-ui/core/Paper";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -121,7 +122,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "default"}
             sortDirection={orderBy === headCell.id ? order : false}
-            style={{fontSize:20}}
+            style={{ fontSize: 20 }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -168,7 +169,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export function EnhancedTable() {
+export const EnhancedTable: React.FC = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("timestamp");
@@ -235,14 +236,24 @@ export function EnhancedTable() {
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
+                .map((row) => {
                   return (
-                    <TableRow key={row.timestamp} >
-                      <TableCell style={{fontSize:16}}>{row.timestamp}</TableCell>
-                      <TableCell align="right" style={{fontSize:16}}>{row.temperature}</TableCell>
-                      <TableCell align="right" style={{fontSize:16}}>{row.bloodOxygen}</TableCell>
-                      <TableCell align="right" style={{fontSize:16}}>{row.heartRate}</TableCell>
-                      <TableCell align="right" style={{fontSize:16}}>{row.respirationRate}</TableCell>
+                    <TableRow key={row.timestamp}>
+                      <TableCell style={{ fontSize: 16 }}>
+                        {row.timestamp}
+                      </TableCell>
+                      <TableCell align="right" style={{ fontSize: 16 }}>
+                        {row.temperature}
+                      </TableCell>
+                      <TableCell align="right" style={{ fontSize: 16 }}>
+                        {row.bloodOxygen}
+                      </TableCell>
+                      <TableCell align="right" style={{ fontSize: 16 }}>
+                        {row.heartRate}
+                      </TableCell>
+                      <TableCell align="right" style={{ fontSize: 16 }}>
+                        {row.respirationRate}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -266,4 +277,4 @@ export function EnhancedTable() {
       </Paper>
     </div>
   );
-}
+};

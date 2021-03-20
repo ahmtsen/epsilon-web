@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React from "react";
-
+import PropTypes from "prop-types";
 interface CardItemProps {
   cardTitle: string;
   cardContent: string;
@@ -36,4 +36,10 @@ export const CardItem: React.FC<CardItemProps> = ({
       </CardContent>
     </Card>
   );
+};
+
+CardItem.propTypes = {
+  cardTitle: PropTypes.string.isRequired,
+  cardContent: PropTypes.string.isRequired,
+  icon: PropTypes.element.isRequired,
 };

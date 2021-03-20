@@ -12,39 +12,45 @@ import { createUrqlClient } from "./utils/createUrqlClient";
 import { ThemeProvider } from "@material-ui/styles";
 import theme from "./utils/theme";
 import { Table } from "./pages/table";
+import PageNotFound from "./pages/404";
+import { Questionnaire } from "./pages/questionnaire";
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <Provider value={createClient(createUrqlClient())}>
         <Router history={createBrowserHistory()}>
           <Switch>
-            <>
-              <Route exact path="/">
-                <Redirect to="/dashboard" />
-              </Route>
-              <Route path="/dashboard">
-                <Dashboard />
-              </Route>
-              <Route path="/login">
-                <Login />
-              </Route>
-              <Route path="/register">
-                <Register />
-              </Route>
-              <Route path="/validate-email">
-                <ValidateEmail />
-              </Route>
-              <Route path="/forgot-password">
-                <ForgotPassword />
-              </Route>
-              <Route path="/change-password">
-                <ChangePassword />
-              </Route>
-              <Route path="/table">
-                <Table />
-              </Route>
-            </>
+            <Route exact path="/">
+              <Redirect to="/dashboard" />
+            </Route>
+            <Route path="/dashboard">
+              <Dashboard />
+            </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/register">
+              <Register />
+            </Route>
+            <Route path="/validate-email">
+              <ValidateEmail />
+            </Route>
+            <Route path="/forgot-password">
+              <ForgotPassword />
+            </Route>
+            <Route path="/change-password">
+              <ChangePassword />
+            </Route>
+            <Route path="/table">
+              <Table />
+            </Route>
+            <Route path="/questionnaire">
+              <Questionnaire />
+            </Route>
+            <Route path="*">
+              <PageNotFound />
+            </Route>
           </Switch>
         </Router>
       </Provider>

@@ -6,14 +6,24 @@ import {
   faTint,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AppBar, makeStyles, Tab, Tabs, Theme } from "@material-ui/core";
-import React from "react";
+import {
+  AppBar,
+  Backdrop,
+  CircularProgress,
+  makeStyles,
+  Tab,
+  Tabs,
+  Theme,
+} from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import { NavBar } from "../components/NavBar";
 import { TabPanel } from "../components/TabPanel";
 import { useIsAuth } from "../utils/useIsAuth";
 import SymptomLayout from "../components/SymptomLayout";
+import { useGetUserThresholdQuery } from "../generated/graphql";
+import { toThresholdMap } from "../utils/toThresholdMap";
 
-function a11yProps(index: any) {
+function a11yProps(index: number) {
   return {
     id: `scrollable-force-tab-${index}`,
     "aria-controls": `scrollable-force-tabpanel-${index}`,
@@ -26,15 +36,38 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "100%",
     backgroundColor: theme.palette.background.paper,
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
 }));
 
-export const Dashboard = () => {
+export const Dashboard: React.FC = () => {
   useIsAuth();
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
-  const handleChange = (_: React.ChangeEvent<{}>, newValue: number) => {
+  const [value, setValue] = useState(0);
+  const handleChange = (_: React.ChangeEvent<unknown>, newValue: number) => {
     setValue(newValue);
   };
+  const [thresholds, setThresholds] = useState<
+    ReturnType<typeof toThresholdMap>
+  >();
+  const [isLoading, setIsLoading] = useState(true);
+  const [{ fetching, data }] = useGetUserThresholdQuery();
+
+  useEffect(() => {
+    if (!fetching && data?.getUserThreshold.temperature) {
+      setThresholds(toThresholdMap(data.getUserThreshold));
+      setIsLoading(false);
+    }
+  }, [fetching, data]);
+  if (isLoading || !thresholds) {
+    return (
+      <Backdrop className={classes.backdrop} open={true}>
+        <CircularProgress size={150} color="inherit" />
+      </Backdrop>
+    );
+  }
   return (
     <NavBar>
       <div className={classes.root}>
@@ -78,24 +111,41 @@ export const Dashboard = () => {
           <SymptomLayout
             title="Temperature"
             symptom="temperature"
-            unit="degC"
+            unit="°C"
+            thresholds={thresholds.temperature}
           />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <SymptomLayout title="Heart Rate" symptom="heartRate" unit="bpm" />
+          <SymptomLayout
+            title="Heart Rate"
+            symptom="heartRate"
+            unit="bpm"
+            thresholds={thresholds.heartRate}
+          />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <SymptomLayout title="Blood Oxygen" symptom="bloodOxygen" unit="%" />
+          <SymptomLayout
+            title="Blood Oxygen"
+            symptom="bloodOxygen"
+            unit="%"
+            thresholds={thresholds.bloodOxygen}
+          />
         </TabPanel>
         <TabPanel value={value} index={3}>
           <SymptomLayout
             title="Respiration Rate"
             symptom="respirationRate"
-            unit="breath/min"
+            unit="breaths/minute"
+            thresholds={thresholds.respirationRate}
           />
         </TabPanel>
         <TabPanel value={value} index={4}>
-          <SymptomLayout title="Cough Count" symptom="cough" unit="cough/day" />
+          <SymptomLayout
+            title="Cough Count"
+            symptom="cough"
+            unit="coughs/day"
+            thresholds={thresholds.cough}
+          />
         </TabPanel>
       </div>
     </NavBar>
