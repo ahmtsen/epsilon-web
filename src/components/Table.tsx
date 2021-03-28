@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Paper from "@material-ui/core/Paper";
+import { Backdrop, CircularProgress } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -166,6 +167,10 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 20,
       width: 1,
     },
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: "#fff",
+    },
   })
 );
 
@@ -215,6 +220,14 @@ export const EnhancedTable: React.FC = () => {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+  if (fetching || !data) {
+    return (
+      <Backdrop className={classes.backdrop} open={true}>
+        <CircularProgress size={150} color="inherit" />
+      </Backdrop>
+    );
+  }
 
   return (
     <div className={classes.root}>

@@ -19,8 +19,12 @@ import {
 } from "../generated/graphql";
 import { getQuestionnaireResult } from "../utils/getQuestionnaireResult";
 import { questionnaireModel } from "../utils/questionnaireModel";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
+import {
+  ExpandMore as ExpandMoreIcon,
+  CheckCircleOutlineSharp,
+} from "@material-ui/icons";
+import { CardItem } from "../components/CardItem";
+import { useHistory } from "react-router";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -39,12 +43,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Questionnaire: React.FC = () => {
   const classes = useStyles();
-
+  const router = useHistory();
   const [, createQuestionnaire] = useCreateQuestionnaireMutation();
   const [{ fetching, data }] = useGetQuestionnaireDataByUserQuery();
-
   const [isNewQuestionnaire, setIsNewQuestionnaire] = useState(false);
+
   const onComplete = async (survey: Survey.SurveyModel) => {
+    setIsNewQuestionnaire(false);
     await createQuestionnaire({
       input: {
         timestamp: new Date(),
@@ -57,12 +62,12 @@ export const Questionnaire: React.FC = () => {
         result: getQuestionnaireResult(survey.data),
       },
     });
-    setIsNewQuestionnaire(false);
+    router.replace(router.location);
   };
   const model = new Survey.Model(questionnaireModel);
   Survey.StylesManager.applyTheme("darkblue");
 
-  if (fetching) {
+  if (fetching || !data) {
     return (
       <Backdrop className={classes.backdrop} open={true}>
         <CircularProgress size={150} color="inherit" />
@@ -76,8 +81,13 @@ export const Questionnaire: React.FC = () => {
         New Questionnaire
       </Button>
       <div className={classes.root}>
-        {data?.getQuestionnaireDataByUser.questionnaires ? (
-          data?.getQuestionnaireDataByUser.questionnaires.map(
+        <CardItem
+          cardTitle={new Date().toISOString()}
+          cardContent="Content"
+          icon={<CheckCircleOutlineSharp />}
+        />
+        {data.getQuestionnaireDataByUser.questionnaires ? (
+          data.getQuestionnaireDataByUser.questionnaires.map(
             (questionnaire) => {
               return (
                 <Accordion
