@@ -20,6 +20,7 @@ export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
   getUserThreshold: Threshold;
+  getExceptions: Array<Exception>;
   getSymptomDataByUser: SymptomResponse;
   getAllSymptomDataByUser: SymptomResponse;
   getQuestionnaireDataByUser: QuestionnaireResponse;
@@ -27,6 +28,11 @@ export type Query = {
 
 
 export type QueryGetUserThresholdArgs = {
+  userId?: Maybe<Scalars['Float']>;
+};
+
+
+export type QueryGetExceptionsArgs = {
   userId?: Maybe<Scalars['Float']>;
 };
 
@@ -57,6 +63,8 @@ export type User = {
   age: Scalars['Int'];
   isSmoker: Scalars['Boolean'];
   hasCoughSickness: Scalars['Boolean'];
+  lastQuestionnaireTime: Scalars['String'];
+  questionnaireNeeded: Scalars['Boolean'];
   threshold: Threshold;
 };
 
@@ -72,6 +80,17 @@ export type Threshold = {
   cough: Scalars['Int'];
   calculateCoughTresholdStarted: Scalars['Boolean'];
 };
+
+export type Exception = {
+  __typename?: 'Exception';
+  id: Scalars['Int'];
+  timestamp: Scalars['DateTime'];
+  cause: Scalars['String'];
+  actualValue?: Maybe<Scalars['Float']>;
+  thresholdValue?: Maybe<Scalars['Float']>;
+  readStatus?: Maybe<Scalars['Boolean']>;
+};
+
 
 export type SymptomResponse = {
   __typename?: 'SymptomResponse';
@@ -106,7 +125,6 @@ export type SymptomData = {
   value: Scalars['Float'];
 };
 
-
 export type QuestionnaireResponse = {
   __typename?: 'QuestionnaireResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -136,6 +154,7 @@ export type Mutation = {
   changePassword: UserResponse;
   sendValidationEmail: Scalars['Boolean'];
   validateEmail: UserResponse;
+  readException: Scalars['Boolean'];
   createSymptom: SymptomResponse;
   createQuestionnaire: QuestionnaireResponse;
 };
@@ -170,6 +189,11 @@ export type MutationSendValidationEmailArgs = {
 
 export type MutationValidateEmailArgs = {
   token: Scalars['String'];
+};
+
+
+export type MutationReadExceptionArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -226,7 +250,7 @@ export type ErrorFragmentFragment = (
 
 export type UserFragmentFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'username'>
+  & Pick<User, 'id' | 'username' | 'questionnaireNeeded' | 'lastQuestionnaireTime'>
 );
 
 export type UserResponseFragmentFragment = (
@@ -305,6 +329,16 @@ export type LogoutMutation = (
   & Pick<Mutation, 'logout'>
 );
 
+export type ReadExceptionMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ReadExceptionMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'readException'>
+);
+
 export type RegisterMutationVariables = Exact<{
   options: RegisterInput;
 }>;
@@ -356,6 +390,17 @@ export type GetAllSymptomDataByUserQuery = (
       & Pick<Symptom, 'id' | 'timestamp' | 'temperature' | 'heartRate' | 'bloodOxygen' | 'respirationRate'>
     )>> }
   ) }
+);
+
+export type GetExceptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetExceptionsQuery = (
+  { __typename?: 'Query' }
+  & { getExceptions: Array<(
+    { __typename?: 'Exception' }
+    & Pick<Exception, 'id' | 'timestamp' | 'cause' | 'actualValue' | 'thresholdValue'>
+  )> }
 );
 
 export type GetQuestionnaireDataByUserQueryVariables = Exact<{ [key: string]: never; }>;
@@ -426,6 +471,8 @@ export const UserFragmentFragmentDoc = gql`
     fragment UserFragment on User {
   id
   username
+  questionnaireNeeded
+  lastQuestionnaireTime
 }
     `;
 export const UserResponseFragmentFragmentDoc = gql`
@@ -449,7 +496,7 @@ export const ChangePasswordDocument = gql`
 
 export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
-}
+};
 export const CreateQuestionnaireDocument = gql`
     mutation CreateQuestionnaire($input: CreateQuestionnaireInput!) {
   createQuestionnaire(input: $input) {
@@ -466,7 +513,7 @@ ${UserFragmentFragmentDoc}`;
 
 export function useCreateQuestionnaireMutation() {
   return Urql.useMutation<CreateQuestionnaireMutation, CreateQuestionnaireMutationVariables>(CreateQuestionnaireDocument);
-}
+};
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)
@@ -475,7 +522,7 @@ export const ForgotPasswordDocument = gql`
 
 export function useForgotPasswordMutation() {
   return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
-}
+};
 export const LoginDocument = gql`
     mutation Login($usernameOrEmail: String!, $password: String!) {
   login(usernameOrEmail: $usernameOrEmail, password: $password) {
@@ -486,7 +533,7 @@ export const LoginDocument = gql`
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
-}
+};
 export const LogoutDocument = gql`
     mutation Logout {
   logout
@@ -495,7 +542,16 @@ export const LogoutDocument = gql`
 
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
+};
+export const ReadExceptionDocument = gql`
+    mutation ReadException($id: Int!) {
+  readException(id: $id)
 }
+    `;
+
+export function useReadExceptionMutation() {
+  return Urql.useMutation<ReadExceptionMutation, ReadExceptionMutationVariables>(ReadExceptionDocument);
+};
 export const RegisterDocument = gql`
     mutation Register($options: RegisterInput!) {
   register(options: $options) {
@@ -506,7 +562,7 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
-}
+};
 export const SendValidationEmailDocument = gql`
     mutation SendValidationEmail($usernameOrEmail: String!) {
   sendValidationEmail(usernameOrEmail: $usernameOrEmail)
@@ -515,7 +571,7 @@ export const SendValidationEmailDocument = gql`
 
 export function useSendValidationEmailMutation() {
   return Urql.useMutation<SendValidationEmailMutation, SendValidationEmailMutationVariables>(SendValidationEmailDocument);
-}
+};
 export const ValidateEmailDocument = gql`
     mutation ValidateEmail($token: String!) {
   validateEmail(token: $token) {
@@ -526,7 +582,7 @@ export const ValidateEmailDocument = gql`
 
 export function useValidateEmailMutation() {
   return Urql.useMutation<ValidateEmailMutation, ValidateEmailMutationVariables>(ValidateEmailDocument);
-}
+};
 export const GetAllSymptomDataByUserDocument = gql`
     query GetAllSymptomDataByUser {
   getAllSymptomDataByUser {
@@ -547,7 +603,22 @@ export const GetAllSymptomDataByUserDocument = gql`
 
 export function useGetAllSymptomDataByUserQuery(options: Omit<Urql.UseQueryArgs<GetAllSymptomDataByUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetAllSymptomDataByUserQuery>({ query: GetAllSymptomDataByUserDocument, ...options });
+};
+export const GetExceptionsDocument = gql`
+    query GetExceptions {
+  getExceptions {
+    id
+    timestamp
+    cause
+    actualValue
+    thresholdValue
+  }
 }
+    `;
+
+export function useGetExceptionsQuery(options: Omit<Urql.UseQueryArgs<GetExceptionsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetExceptionsQuery>({ query: GetExceptionsDocument, ...options });
+};
 export const GetQuestionnaireDataByUserDocument = gql`
     query GetQuestionnaireDataByUser {
   getQuestionnaireDataByUser {
@@ -571,7 +642,7 @@ export const GetQuestionnaireDataByUserDocument = gql`
 
 export function useGetQuestionnaireDataByUserQuery(options: Omit<Urql.UseQueryArgs<GetQuestionnaireDataByUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetQuestionnaireDataByUserQuery>({ query: GetQuestionnaireDataByUserDocument, ...options });
-}
+};
 export const GetSymptomDataByUserDocument = gql`
     query GetSymptomDataByUser($symptom: String!) {
   getSymptomDataByUser(symptom: $symptom) {
@@ -589,7 +660,7 @@ export const GetSymptomDataByUserDocument = gql`
 
 export function useGetSymptomDataByUserQuery(options: Omit<Urql.UseQueryArgs<GetSymptomDataByUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetSymptomDataByUserQuery>({ query: GetSymptomDataByUserDocument, ...options });
-}
+};
 export const GetUserThresholdDocument = gql`
     query GetUserThreshold {
   getUserThreshold {
@@ -608,7 +679,7 @@ export const GetUserThresholdDocument = gql`
 
 export function useGetUserThresholdQuery(options: Omit<Urql.UseQueryArgs<GetUserThresholdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetUserThresholdQuery>({ query: GetUserThresholdDocument, ...options });
-}
+};
 export const MeDocument = gql`
     query Me {
   me {
@@ -619,4 +690,4 @@ export const MeDocument = gql`
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
-}
+};

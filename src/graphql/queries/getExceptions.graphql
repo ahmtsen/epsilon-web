@@ -1,0 +1,9 @@
+query GetExceptions {
+  getExceptions {
+    id
+    timestamp
+    cause
+    actualValue
+    thresholdValue
+  }
+}

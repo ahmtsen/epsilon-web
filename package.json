@@ -15,7 +15,9 @@
     "@graphql-codegen/typescript-urql": "^2.0.4",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
+    "@sweetalert2/theme-material-ui": "^4.0.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -27,6 +29,8 @@
     "@types/react-table": "^7.0.29",
     "@urql/exchange-graphcache": "^4.0.0",
     "apexcharts": "^3.25.0",
+    "classnames": "^2.2.6",
+    "dotenv": "^8.2.0",
     "formik": "^2.2.6",
     "graphql": "^15.5.0",
     "moment": "^2.29.1",
@@ -40,6 +44,7 @@
     "react-scripts": "4.0.3",
     "react-table": "^7.6.3",
     "survey-react": "^1.8.35",
+    "sweetalert2": "^10.15.7",
     "typescript": "^4.1.2",
     "urql": "^2.0.1",
     "web-vitals": "^1.0.1"
@@ -49,7 +54,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "gen": "graphql-codegen --config codegen.yml"
+    "gen": "graphql-codegen --config codegen.yml",
+    "gen-env": "npx gen-env-types .env -o src/env.d.ts -e ."
   },
   "eslintConfig": {
     "extends": [
@@ -70,6 +76,7 @@
     ]
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.11",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "eslint": "^7.22.0",

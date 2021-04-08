@@ -1,4 +1,6 @@
 fragment UserFragment on User {
   id
   username
+  questionnaireNeeded
+  lastQuestionnaireTime
 }

@@ -20,8 +20,10 @@ import { NavBar } from "../components/NavBar";
 import { TabPanel } from "../components/TabPanel";
 import { useIsAuth } from "../utils/useIsAuth";
 import SymptomLayout from "../components/SymptomLayout";
-import { useGetUserThresholdQuery } from "../generated/graphql";
+import { useGetUserThresholdQuery, useMeQuery } from "../generated/graphql";
 import { toThresholdMap } from "../utils/toThresholdMap";
+import Swal from "sweetalert2";
+import { useHistory } from "react-router";
 
 function a11yProps(index: number) {
   return {
@@ -54,10 +56,34 @@ export const Dashboard: React.FC = () => {
   >();
   const [isLoading, setIsLoading] = useState(true);
   const [{ fetching, data }] = useGetUserThresholdQuery();
+  const [{ data: me }] = useMeQuery();
+  const router = useHistory();
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    if (me?.me?.questionnaireNeeded && !shown) {
+      setShown(true);
+      Swal.fire({
+        icon: "info",
+        title: "Daily Questionnaire",
+        text:
+          "Please do not forget to answer daily questionnaire!",
+        footer: "Epsilon Inc. COVID-19 Symptom Tracking",
+        allowOutsideClick: false,
+        backdrop: false,
+        confirmButtonText: "ANSWER",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          router.push("/questionnaire");
+        }
+      });
+    }
+  }, [me]);
 
   useEffect(() => {
-    if (!fetching && data?.getUserThreshold.temperature) {
-      setThresholds(toThresholdMap(data.getUserThreshold));
+    if (!fetching) {
+      if (data?.getUserThreshold.temperature) {
+        setThresholds(toThresholdMap(data.getUserThreshold));
+      }
       setIsLoading(false);
     }
   }, [fetching, data]);

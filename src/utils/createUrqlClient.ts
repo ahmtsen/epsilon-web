@@ -15,10 +15,9 @@ const errorExchange: Exchange = ({ forward }) => (ops$) => {
     })
   );
 };
-
 export const createUrqlClient = (): ClientOptions => {
   return {
-    url: "http://localhost:5000/graphql",
+    url: process.env.REACT_APP_GRAPHQL_ORIGIN as string,
     fetchOptions: {
       credentials: "include" as const, // in order to send cookie to graphql server
     },

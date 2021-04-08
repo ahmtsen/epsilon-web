@@ -1,35 +1,29 @@
+import DateFnsUtils from "@date-io/moment";
 import {
   Box,
   Button,
-  TextField,
   Container,
-  Typography,
-  FormLabel,
   FormControl,
   FormControlLabel,
+  FormLabel,
   Radio,
   RadioGroup,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
+  TextField,
+  Typography,
 } from "@material-ui/core";
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from "@material-ui/pickers";
 import { Form, Formik } from "formik";
 import React, { useState } from "react";
+import { useHistory } from "react-router";
+import Swal from "sweetalert2";
 import { TopBar } from "../components/TopBar";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/moment";
 import { useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
-import { useHistory } from "react-router";
-
 export const Register: React.FC = () => {
   const [birthday, setBirthday] = useState(new Date());
-  const [complete, setComplete] = useState(false);
   const router = useHistory();
   const [, register] = useRegisterMutation();
   return (
@@ -59,7 +53,18 @@ export const Register: React.FC = () => {
               setErrors(toErrorMap(response.data.register.errors));
             } else if (response.data?.register.user) {
               //register successfull
-              setComplete(true);
+              Swal.fire({
+                icon: "info",
+                title: "Registration Successful",
+                text: ` You are successfuly registered. A validation e-mail is sent your
+                email. Please validate your e-mail before logging in.`,
+                footer: "Epsilon Inc. COVID-19 Symptom Tracking",
+                allowOutsideClick: false,
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  router.push("/login");
+                }
+              });
             }
           }}
         >
@@ -234,20 +239,6 @@ export const Register: React.FC = () => {
           )}
         </Formik>
       </Box>
-      <Dialog open={complete} onClose={() => router.push("/login")}>
-        <DialogTitle>{"Register Successful"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            You are successfuly registered. A validation e-mail is sent your
-            email. Please validate your e-mail before logging in.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => router.push("/login")} color="primary">
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
     </TopBar>
   );
 };

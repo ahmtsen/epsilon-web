@@ -1,19 +1,19 @@
+import { ThemeProvider } from "@material-ui/styles";
+import { createBrowserHistory } from "history";
 import React from "react";
 import { Redirect, Route, Router, Switch } from "react-router";
+import { createClient, Provider } from "urql";
+import PageNotFound from "./pages/404";
 import { ChangePassword } from "./pages/change-password";
 import { Dashboard } from "./pages/dashboard";
 import { ForgotPassword } from "./pages/forgot-password";
 import { Login } from "./pages/login";
-import { Register } from "./pages/register";
-import { ValidateEmail } from "./pages/validate-email";
-import { createBrowserHistory } from "history";
-import { createClient, Provider } from "urql";
-import { createUrqlClient } from "./utils/createUrqlClient";
-import { ThemeProvider } from "@material-ui/styles";
-import theme from "./utils/theme";
-import { Table } from "./pages/table";
-import PageNotFound from "./pages/404";
 import { Questionnaire } from "./pages/questionnaire";
+import { Register } from "./pages/register";
+import { Table } from "./pages/table";
+import { ValidateEmail } from "./pages/validate-email";
+import { createUrqlClient } from "./utils/createUrqlClient";
+import theme from "./utils/theme";
 
 const App: React.FC = () => {
   return (
@@ -33,13 +33,13 @@ const App: React.FC = () => {
             <Route path="/register">
               <Register />
             </Route>
-            <Route path="/validate-email">
+            <Route path="/validate-email/:token">
               <ValidateEmail />
             </Route>
             <Route path="/forgot-password">
               <ForgotPassword />
             </Route>
-            <Route path="/change-password">
+            <Route path="/change-password/:token">
               <ChangePassword />
             </Route>
             <Route path="/table">

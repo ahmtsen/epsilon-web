@@ -1,11 +1,9 @@
-import React from "react";
 import {
-  Timeline,
   QuestionAnswer,
-  Toc,
-  AccountCircle,
-  Notifications,
+  Timeline,
+  Toc
 } from "@material-ui/icons";
+import React from "react";
 
 export const routes = [
   {
@@ -22,15 +20,5 @@ export const routes = [
     name: "Questionnaire",
     icon: <QuestionAnswer />,
     href: "/questionnaire",
-  },
-  {
-    name: "Notifications",
-    icon: <Notifications />,
-    href: "/notifications",
-  },
-  {
-    name: "Profile",
-    icon: <AccountCircle />,
-    href: "/profile",
   },
 ];

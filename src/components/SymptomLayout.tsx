@@ -49,7 +49,7 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
       );
       const datas = sorted.map((x) => [x.timestamp, x.value]);
       setSymptomData(datas);
-      setIsLoading(false);
+
       const _range =
         new Date(datas[datas.length - 1][0]).getTime() -
         (datas.length - DATA_RANGE < 0
@@ -57,6 +57,7 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
           : new Date(datas[datas.length - DATA_RANGE][0]).getTime());
       setRange(-1 * _range);
     }
+    setIsLoading(false);
   }, [fetching, data]);
 
   if (isLoading) {

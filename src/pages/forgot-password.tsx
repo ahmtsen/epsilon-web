@@ -2,22 +2,16 @@ import {
   Box,
   Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   TextField,
   Typography,
 } from "@material-ui/core";
 import { Form, Formik } from "formik";
-import React, { useState } from "react";
+import React from "react";
+import { useHistory } from "react-router-dom";
 import { TopBar } from "../components/TopBar";
 import { useForgotPasswordMutation } from "../generated/graphql";
-import { useHistory } from "react-router-dom";
-
+import Swal from "sweetalert2";
 export const ForgotPassword: React.FC = () => {
-  const [complete, setComplete] = useState<boolean>(false);
   const [, forgotPassword] = useForgotPasswordMutation();
   const router = useHistory();
   return (
@@ -29,7 +23,17 @@ export const ForgotPassword: React.FC = () => {
             await forgotPassword({
               email: values.email,
             });
-            setComplete(true);
+            Swal.fire({
+              icon: "info",
+              title: "Forgot Password",
+              text: `If an account with that e-mail exists, we sent you an e-mail.`,
+              footer: "Epsilon Inc. COVID-19 Symptom Tracking",
+              allowOutsideClick: false,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                router.push("/login");
+              }
+            });
           }}
         >
           {({
@@ -81,19 +85,6 @@ export const ForgotPassword: React.FC = () => {
           )}
         </Formik>
       </Box>
-      <Dialog open={complete} onClose={() => router.push("/login")}>
-        <DialogTitle>{"Forgot Password"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            If an account with that e-mail exists, we sent you an email.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => router.push("/login")} color="primary">
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
     </TopBar>
   );
 };

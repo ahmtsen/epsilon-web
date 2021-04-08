@@ -1,15 +1,10 @@
 import {
   Box,
   Button,
-  TextField,
-  Link,
   Container,
+  Link,
+  TextField,
   Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import React, { useState } from "react";
@@ -21,11 +16,10 @@ import {
   useSendValidationEmailMutation,
 } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
-
+import Swal from "sweetalert2";
 export const Login: React.FC = () => {
   const router = useHistory();
   const [, login] = useLoginMutation();
-  const [emailValidationError, setEmailValidationError] = useState(false);
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [, sendValidationEmail] = useSendValidationEmailMutation();
   return (
@@ -39,7 +33,24 @@ export const Login: React.FC = () => {
               //login error
               if (response.data.login.errors[0].field === "emailValidation") {
                 setUsernameOrEmail(values.usernameOrEmail);
-                setEmailValidationError(true);
+                Swal.fire({
+                  icon: "info",
+                  title: "Please Validate your E-Mail",
+                  text: ` A validation e-mail is sent to your e-mail. Please validate your
+                e-mail before logging in. If you do not have any e-mail please check
+                your spam folder. You can click below button to re-send validation
+                e-mail if you do not have one.`,
+                  footer: "Epsilon Inc. COVID-19 Symptom Tracking",
+                  allowOutsideClick: false,
+                  showCancelButton: true,
+                  cancelButtonText: "NOT HAVE ANY E-MAIL",
+                }).then(async (result) => {
+                  if (result.isDismissed) {
+                    await sendValidationEmail({
+                      usernameOrEmail: usernameOrEmail,
+                    });
+                  }
+                });
               }
               setErrors(toErrorMap(response.data.login.errors));
             } else if (response.data?.login.user) {
@@ -104,7 +115,7 @@ export const Login: React.FC = () => {
                     justifyContent="space-between"
                   >
                     <RouterLink to="/forgot-password">
-                      <Link variant="subtitle1">Forgot Password?</Link>
+                      <Link variant="subtitle1">Forgot Password ?</Link>
                     </RouterLink>
                     <Button
                       size="large"
@@ -122,39 +133,6 @@ export const Login: React.FC = () => {
           )}
         </Formik>
       </Box>
-      <Dialog
-        open={emailValidationError}
-        onClose={() => setEmailValidationError(false)}
-      >
-        <DialogTitle>{"PLEASE VALIDATE YOUR E-MAIL"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            A validation e-mail is sent to your e-mail. Please validate your
-            e-mail before logging in. If you do not have any e-mail please check
-            your spam folder. You can click below button to re-send validation
-            e-mail if you do not have one.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={async () => {
-              await sendValidationEmail({
-                usernameOrEmail: usernameOrEmail,
-              });
-              setEmailValidationError(false);
-            }}
-            color="primary"
-          >
-            not have any e-mail
-          </Button>
-          <Button
-            onClick={() => setEmailValidationError(false)}
-            color="primary"
-          >
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
     </TopBar>
   );
 };
