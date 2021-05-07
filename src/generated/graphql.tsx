@@ -16,89 +16,29 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  me?: Maybe<User>;
-  getUserThreshold: Threshold;
-  getExceptions: Array<Exception>;
-  getSymptomDataByUser: SymptomResponse;
-  getAllSymptomDataByUser: SymptomResponse;
-  getQuestionnaireDataByUser: QuestionnaireResponse;
-};
-
-
-export type QueryGetUserThresholdArgs = {
+export type CreateQuestionnaireInput = {
+  timestamp: Scalars['DateTime'];
+  question1: Scalars['String'];
+  question2?: Maybe<Scalars['String']>;
+  question3?: Maybe<Scalars['Boolean']>;
+  question4?: Maybe<Scalars['String']>;
+  question5?: Maybe<Scalars['String']>;
+  question6?: Maybe<Scalars['Boolean']>;
+  result: Scalars['Boolean'];
   userId?: Maybe<Scalars['Float']>;
 };
 
-
-export type QueryGetExceptionsArgs = {
-  userId?: Maybe<Scalars['Float']>;
-};
-
-
-export type QueryGetSymptomDataByUserArgs = {
-  symptom: Scalars['String'];
-  userId?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetAllSymptomDataByUserArgs = {
-  userId?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetQuestionnaireDataByUserArgs = {
-  userId?: Maybe<Scalars['Float']>;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['Int'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
-  username: Scalars['String'];
-  email: Scalars['String'];
-  birthday: Scalars['String'];
-  age: Scalars['Int'];
-  isSmoker: Scalars['Boolean'];
-  hasCoughSickness: Scalars['Boolean'];
-  lastQuestionnaireTime: Scalars['String'];
-  questionnaireNeeded: Scalars['Boolean'];
-  threshold: Threshold;
-};
-
-export type Threshold = {
-  __typename?: 'Threshold';
-  id: Scalars['Int'];
-  temperature: Scalars['Float'];
-  heartRateMin: Scalars['Int'];
-  heartRateMax: Scalars['Int'];
-  bloodOxygen: Scalars['Float'];
-  respirationRateMin: Scalars['Int'];
-  respirationRateMax: Scalars['Int'];
-  cough: Scalars['Int'];
-  calculateCoughTresholdStarted: Scalars['Boolean'];
-};
 
 export type Exception = {
   __typename?: 'Exception';
   id: Scalars['Int'];
   timestamp: Scalars['DateTime'];
   cause: Scalars['String'];
-  actualValue?: Maybe<Scalars['Float']>;
-  thresholdValue?: Maybe<Scalars['Float']>;
+  data_length: Scalars['Float'];
+  anomaly_length: Scalars['Float'];
+  chart: Scalars['String'];
+  threshold: Scalars['Float'];
   readStatus?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type SymptomResponse = {
-  __typename?: 'SymptomResponse';
-  errors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
-  symptoms?: Maybe<Array<Symptom>>;
-  data?: Maybe<Array<SymptomData>>;
-  symptom?: Maybe<Scalars['String']>;
 };
 
 export type FieldError = {
@@ -107,46 +47,10 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
-export type Symptom = {
-  __typename?: 'Symptom';
-  id: Scalars['Int'];
-  timestamp: Scalars['String'];
-  temperature?: Maybe<Scalars['Float']>;
-  heartRate?: Maybe<Scalars['Int']>;
-  bloodOxygen?: Maybe<Scalars['Float']>;
-  respirationRate?: Maybe<Scalars['Int']>;
-  cough?: Maybe<Scalars['Boolean']>;
-};
-
-export type SymptomData = {
-  __typename?: 'SymptomData';
-  id: Scalars['Float'];
-  timestamp: Scalars['DateTime'];
-  value: Scalars['Float'];
-};
-
-export type QuestionnaireResponse = {
-  __typename?: 'QuestionnaireResponse';
-  errors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
-  questionnaires?: Maybe<Array<Questionnaire>>;
-};
-
-export type Questionnaire = {
-  __typename?: 'Questionnaire';
-  id: Scalars['Float'];
-  timestamp: Scalars['String'];
-  question1: Scalars['String'];
-  question2?: Maybe<Scalars['String']>;
-  question3?: Maybe<Scalars['Boolean']>;
-  question4?: Maybe<Scalars['String']>;
-  question5?: Maybe<Scalars['String']>;
-  question6?: Maybe<Scalars['Boolean']>;
-  result: Scalars['Boolean'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
+  createQuestionnaire: QuestionnaireResponse;
+  createSymptom: SymptomResponse;
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -155,8 +59,18 @@ export type Mutation = {
   sendValidationEmail: Scalars['Boolean'];
   validateEmail: UserResponse;
   readException: Scalars['Boolean'];
-  createSymptom: SymptomResponse;
-  createQuestionnaire: QuestionnaireResponse;
+  changePasswordSync: UserResponse;
+  changeEmailSync: UserResponse;
+};
+
+
+export type MutationCreateQuestionnaireArgs = {
+  input: CreateQuestionnaireInput;
+};
+
+
+export type MutationCreateSymptomArgs = {
+  input: SymptomInput;
 };
 
 
@@ -197,19 +111,70 @@ export type MutationReadExceptionArgs = {
 };
 
 
-export type MutationCreateSymptomArgs = {
-  input: SymptomInput;
+export type MutationChangePasswordSyncArgs = {
+  newPassword: Scalars['String'];
+  oldPassword: Scalars['String'];
 };
 
 
-export type MutationCreateQuestionnaireArgs = {
-  input: CreateQuestionnaireInput;
+export type MutationChangeEmailSyncArgs = {
+  email: Scalars['String'];
 };
 
-export type UserResponse = {
-  __typename?: 'UserResponse';
+export type Query = {
+  __typename?: 'Query';
+  getQuestionnaireDataByUser: QuestionnaireResponse;
+  getSymptomDataByUser: SymptomResponse;
+  getAllSymptomDataByUser: SymptomResponse;
+  me?: Maybe<User>;
+  getUserThreshold: Threshold;
+  getExceptions: Array<Exception>;
+};
+
+
+export type QueryGetQuestionnaireDataByUserArgs = {
+  userId?: Maybe<Scalars['Float']>;
+};
+
+
+export type QueryGetSymptomDataByUserArgs = {
+  symptom: Scalars['String'];
+  userId?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetAllSymptomDataByUserArgs = {
+  userId?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetUserThresholdArgs = {
+  userId?: Maybe<Scalars['Float']>;
+};
+
+
+export type QueryGetExceptionsArgs = {
+  userId?: Maybe<Scalars['Float']>;
+};
+
+export type Questionnaire = {
+  __typename?: 'Questionnaire';
+  id: Scalars['Float'];
+  timestamp: Scalars['String'];
+  question1: Scalars['String'];
+  question2?: Maybe<Scalars['String']>;
+  question3?: Maybe<Scalars['Boolean']>;
+  question4?: Maybe<Scalars['String']>;
+  question5?: Maybe<Scalars['String']>;
+  question6?: Maybe<Scalars['Boolean']>;
+  result: Scalars['Boolean'];
+};
+
+export type QuestionnaireResponse = {
+  __typename?: 'QuestionnaireResponse';
   errors?: Maybe<Array<FieldError>>;
   user?: Maybe<User>;
+  questionnaires?: Maybe<Array<Questionnaire>>;
 };
 
 export type RegisterInput = {
@@ -221,26 +186,72 @@ export type RegisterInput = {
   hasCoughSickness: Scalars['Boolean'];
 };
 
-export type SymptomInput = {
+export type Symptom = {
+  __typename?: 'Symptom';
+  id: Scalars['Int'];
+  timestamp: Scalars['String'];
+  temperature?: Maybe<Scalars['Float']>;
+  heartRate?: Maybe<Scalars['Int']>;
+  bloodOxygen?: Maybe<Scalars['Float']>;
+  cough?: Maybe<Scalars['Boolean']>;
+};
+
+export type SymptomData = {
+  __typename?: 'SymptomData';
+  id: Scalars['Float'];
   timestamp: Scalars['DateTime'];
+  value: Scalars['Float'];
+};
+
+export type SymptomInput = {
+  timestamp?: Maybe<Scalars['DateTime']>;
   temperature?: Maybe<Scalars['Float']>;
   heartRate?: Maybe<Scalars['Float']>;
   bloodOxygen?: Maybe<Scalars['Float']>;
-  respirationRate?: Maybe<Scalars['Float']>;
   cough?: Maybe<Scalars['Boolean']>;
   userId: Scalars['Float'];
 };
 
-export type CreateQuestionnaireInput = {
-  timestamp: Scalars['DateTime'];
-  question1: Scalars['String'];
-  question2?: Maybe<Scalars['String']>;
-  question3?: Maybe<Scalars['Boolean']>;
-  question4?: Maybe<Scalars['String']>;
-  question5?: Maybe<Scalars['String']>;
-  question6?: Maybe<Scalars['Boolean']>;
-  result: Scalars['Boolean'];
-  userId?: Maybe<Scalars['Float']>;
+export type SymptomResponse = {
+  __typename?: 'SymptomResponse';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<User>;
+  symptoms?: Maybe<Array<Symptom>>;
+  data?: Maybe<Array<SymptomData>>;
+  symptom?: Maybe<Scalars['String']>;
+};
+
+export type Threshold = {
+  __typename?: 'Threshold';
+  id: Scalars['Int'];
+  temperature: Scalars['Float'];
+  heartRateMin: Scalars['Int'];
+  heartRateMax: Scalars['Int'];
+  bloodOxygen: Scalars['Float'];
+  cough: Scalars['Int'];
+  calculateCoughTresholdStarted: Scalars['Boolean'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['Int'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  username: Scalars['String'];
+  email: Scalars['String'];
+  birthday: Scalars['String'];
+  age: Scalars['Int'];
+  isSmoker: Scalars['Boolean'];
+  hasCoughSickness: Scalars['Boolean'];
+  lastQuestionnaireTime: Scalars['String'];
+  questionnaireNeeded: Scalars['Boolean'];
+  threshold: Threshold;
+};
+
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<User>;
 };
 
 export type ErrorFragmentFragment = (
@@ -387,7 +398,7 @@ export type GetAllSymptomDataByUserQuery = (
       & ErrorFragmentFragment
     )>>, symptoms?: Maybe<Array<(
       { __typename?: 'Symptom' }
-      & Pick<Symptom, 'id' | 'timestamp' | 'temperature' | 'heartRate' | 'bloodOxygen' | 'respirationRate'>
+      & Pick<Symptom, 'id' | 'timestamp' | 'temperature' | 'heartRate' | 'bloodOxygen'>
     )>> }
   ) }
 );
@@ -399,7 +410,7 @@ export type GetExceptionsQuery = (
   { __typename?: 'Query' }
   & { getExceptions: Array<(
     { __typename?: 'Exception' }
-    & Pick<Exception, 'id' | 'timestamp' | 'cause' | 'actualValue' | 'thresholdValue'>
+    & Pick<Exception, 'id' | 'timestamp' | 'cause' | 'data_length' | 'anomaly_length' | 'chart' | 'threshold' | 'readStatus'>
   )> }
 );
 
@@ -446,7 +457,7 @@ export type GetUserThresholdQuery = (
   { __typename?: 'Query' }
   & { getUserThreshold: (
     { __typename?: 'Threshold' }
-    & Pick<Threshold, 'id' | 'temperature' | 'bloodOxygen' | 'respirationRateMin' | 'respirationRateMax' | 'cough' | 'heartRateMin' | 'heartRateMax' | 'calculateCoughTresholdStarted'>
+    & Pick<Threshold, 'id' | 'temperature' | 'bloodOxygen' | 'cough' | 'heartRateMin' | 'heartRateMax' | 'calculateCoughTresholdStarted'>
   ) }
 );
 
@@ -595,7 +606,6 @@ export const GetAllSymptomDataByUserDocument = gql`
       temperature
       heartRate
       bloodOxygen
-      respirationRate
     }
   }
 }
@@ -610,8 +620,11 @@ export const GetExceptionsDocument = gql`
     id
     timestamp
     cause
-    actualValue
-    thresholdValue
+    data_length
+    anomaly_length
+    chart
+    threshold
+    readStatus
   }
 }
     `;
@@ -667,8 +680,6 @@ export const GetUserThresholdDocument = gql`
     id
     temperature
     bloodOxygen
-    respirationRateMin
-    respirationRateMax
     cough
     heartRateMin
     heartRateMax

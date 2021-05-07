@@ -6,10 +6,6 @@ export const toThresholdMap = (
   return {
     temperature: [thresholds.temperature],
     bloodOxygen: [thresholds.bloodOxygen],
-    respirationRate: [
-      thresholds.respirationRateMax,
-      thresholds.respirationRateMin,
-    ],
     heartRate: [thresholds.heartRateMin, thresholds.heartRateMax],
     cough: [thresholds.cough],
   };

@@ -1,7 +1,8 @@
 import {
+  Notifications,
   QuestionAnswer,
   Timeline,
-  Toc
+  Toc,
 } from "@material-ui/icons";
 import React from "react";
 
@@ -20,5 +21,10 @@ export const routes = [
     name: "Questionnaire",
     icon: <QuestionAnswer />,
     href: "/questionnaire",
+  },
+  {
+    name: "Notifications",
+    icon: <Notifications />,
+    href: "/notifications",
   },
 ];

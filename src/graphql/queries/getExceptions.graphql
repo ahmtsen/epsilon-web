@@ -3,7 +3,10 @@ query GetExceptions {
     id
     timestamp
     cause
-    actualValue
-    thresholdValue
+    data_length
+    anomaly_length
+    chart
+    threshold
+    readStatus
   }
 }

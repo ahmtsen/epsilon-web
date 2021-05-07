@@ -17,7 +17,6 @@ interface Data {
   timestamp: string;
   temperature: number;
   heartRate: number;
-  respirationRate: number;
   bloodOxygen: number;
 }
 
@@ -86,12 +85,6 @@ const headCells: HeadCell[] = [
     numeric: true,
     disablePadding: false,
     label: "Heart Rate",
-  },
-  {
-    id: "respirationRate",
-    numeric: true,
-    disablePadding: false,
-    label: "Respiration Rate",
   },
 ];
 
@@ -263,9 +256,6 @@ export const EnhancedTable: React.FC = () => {
                       </TableCell>
                       <TableCell align="right" style={{ fontSize: 16 }}>
                         {row.heartRate}
-                      </TableCell>
-                      <TableCell align="right" style={{ fontSize: 16 }}>
-                        {row.respirationRate}
                       </TableCell>
                     </TableRow>
                   );

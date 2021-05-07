@@ -1,13 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  IconButton,
-  Link,
-  Paper,
-  Popper,
-  PopperPlacementType,
-} from "@material-ui/core";
+import { Badge, Box, Button, Link } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
@@ -19,22 +10,14 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import {
-  AccountCircle,
-  Clear,
-  ExitToApp,
-  Notifications,
-} from "@material-ui/icons";
+import { AccountCircle, ExitToApp } from "@material-ui/icons";
 import React from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import {
-  Exception,
   useGetExceptionsQuery,
   useLogoutMutation,
   useMeQuery,
-  useReadExceptionMutation,
 } from "../generated/graphql";
-import { createExceptionNotification } from "../utils/createExceptionNotification";
 import { routes } from "../utils/routes";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
@@ -77,29 +60,8 @@ export const NavBar: React.FC<NavBarProps> = ({ children }) => {
   const [, logout] = useLogoutMutation();
   const [{ data }] = useMeQuery();
   const [{ data: exceptions }] = useGetExceptionsQuery();
-  const [, read] = useReadExceptionMutation();
   const router = useHistory();
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-  const [open, setOpen] = React.useState(false);
-  const [placement, setPlacement] = React.useState<PopperPlacementType>();
-  const [except, setExcept] = React.useState<Exception[]>([]);
   const classes = useStyles();
-
-  React.useEffect(() => {
-    if (exceptions?.getExceptions) {
-      setExcept(exceptions.getExceptions);
-    }
-  }, [exceptions]);
-
-  const handleClick = (newPlacement: PopperPlacementType) => (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setOpen((prev) => placement !== newPlacement || !prev);
-    setPlacement(newPlacement);
-  };
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -115,45 +77,6 @@ export const NavBar: React.FC<NavBarProps> = ({ children }) => {
             flexDirection="row"
             justifyContent="flex-end"
           >
-            <IconButton color="secondary" onClick={handleClick("bottom-end")}>
-              <Badge badgeContent={except.length} color="error">
-                <Notifications fontSize="default" />
-              </Badge>
-            </IconButton>
-            <Popper
-              open={open}
-              anchorEl={anchorEl}
-              placement={placement}
-              transition
-            >
-              {except.map((exception) => {
-                return (
-                  <Paper key={exception.id}>
-                    <Box
-                      flex={1}
-                      display="flex"
-                      flexDirection="row"
-                      justifyContent="center"
-                    >
-                      <Typography className={classes.typography}>
-                        {createExceptionNotification(exception)}
-                      </Typography>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                          setExcept(
-                            except.filter((x) => x.id !== exception.id)
-                          );
-                          read({ id: exception.id });
-                        }}
-                      >
-                        <Clear fontSize="default" />
-                      </IconButton>
-                    </Box>
-                  </Paper>
-                );
-              })}
-            </Popper>
             <Button
               color="secondary"
               variant="outlined"
@@ -179,10 +102,29 @@ export const NavBar: React.FC<NavBarProps> = ({ children }) => {
             {routes.map((route) => (
               <NavLink to={route.href} key={route.name}>
                 <Link>
-                  <ListItem button>
-                    <ListItemIcon>{route.icon}</ListItemIcon>
-                    <ListItemText primary={route.name} />
-                  </ListItem>
+                  {route.name === "Notifications" ? (
+                    <ListItem button>
+                      <ListItemIcon>
+                        <Badge
+                          color="error"
+                          badgeContent={
+                            exceptions?.getExceptions.filter(
+                              (x) => !x.readStatus
+                            ).length
+                          }
+                        >
+                          {route.icon}
+                        </Badge>
+                      </ListItemIcon>
+
+                      <ListItemText primary={route.name} />
+                    </ListItem>
+                  ) : (
+                    <ListItem button>
+                      <ListItemIcon>{route.icon}</ListItemIcon>
+                      <ListItemText primary={route.name} />
+                    </ListItem>
+                  )}
                 </Link>
               </NavLink>
             ))}

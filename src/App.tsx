@@ -14,7 +14,7 @@ import { Table } from "./pages/table";
 import { ValidateEmail } from "./pages/validate-email";
 import { createUrqlClient } from "./utils/createUrqlClient";
 import theme from "./utils/theme";
-
+import { Notifications } from "./pages/notifications";
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -47,6 +47,9 @@ const App: React.FC = () => {
             </Route>
             <Route path="/questionnaire">
               <Questionnaire />
+            </Route>
+            <Route path="/notifications">
+              <Notifications />
             </Route>
             <Route path="*">
               <PageNotFound />

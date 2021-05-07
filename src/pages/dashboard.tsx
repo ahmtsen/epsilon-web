@@ -1,7 +1,6 @@
 import {
   faHeadSideCough,
   faHeartbeat,
-  faLungs,
   faTemperatureLow,
   faTint,
 } from "@fortawesome/free-solid-svg-icons";
@@ -16,14 +15,14 @@ import {
   Theme,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router";
+import Swal from "sweetalert2";
 import { NavBar } from "../components/NavBar";
-import { TabPanel } from "../components/TabPanel";
-import { useIsAuth } from "../utils/useIsAuth";
 import SymptomLayout from "../components/SymptomLayout";
+import { TabPanel } from "../components/TabPanel";
 import { useGetUserThresholdQuery, useMeQuery } from "../generated/graphql";
 import { toThresholdMap } from "../utils/toThresholdMap";
-import Swal from "sweetalert2";
-import { useHistory } from "react-router";
+import { useIsAuth } from "../utils/useIsAuth";
 
 function a11yProps(index: number) {
   return {
@@ -65,8 +64,7 @@ export const Dashboard: React.FC = () => {
       Swal.fire({
         icon: "info",
         title: "Daily Questionnaire",
-        text:
-          "Please do not forget to answer daily questionnaire!",
+        text: "Please do not forget to answer daily questionnaire!",
         footer: "Epsilon Inc. COVID-19 Symptom Tracking",
         allowOutsideClick: false,
         backdrop: false,
@@ -122,14 +120,9 @@ export const Dashboard: React.FC = () => {
               {...a11yProps(2)}
             />
             <Tab
-              label="Respiration Rate"
-              icon={<FontAwesomeIcon size="2x" icon={faLungs} />}
-              {...a11yProps(3)}
-            />
-            <Tab
               label="Cough Count"
               icon={<FontAwesomeIcon size="2x" icon={faHeadSideCough} />}
-              {...a11yProps(4)}
+              {...a11yProps(3)}
             />
           </Tabs>
         </AppBar>
@@ -158,14 +151,6 @@ export const Dashboard: React.FC = () => {
           />
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <SymptomLayout
-            title="Respiration Rate"
-            symptom="respirationRate"
-            unit="breaths/minute"
-            thresholds={thresholds.respirationRate}
-          />
-        </TabPanel>
-        <TabPanel value={value} index={4}>
           <SymptomLayout
             title="Cough Count"
             symptom="cough"
