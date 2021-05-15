@@ -19,6 +19,7 @@ import {
 } from "../generated/graphql";
 import { getQuestionnaireResult } from "../utils/getQuestionnaireResult";
 import { questionnaireModel } from "../utils/questionnaireModel";
+import { useIsAuth } from "../utils/useIsAuth";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const Questionnaire: React.FC = () => {
+  useIsAuth();
   const classes = useStyles();
   const [, createQuestionnaire] = useCreateQuestionnaireMutation();
   const [

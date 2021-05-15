@@ -36,11 +36,9 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
   const classes = useStyles();
   const [symptomData, setSymptomData] = useState<unknown[][]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [range, setRange] = useState(0);
   const [{ fetching, data }] = useGetSymptomDataByUserQuery({
     variables: { symptom: symptom },
   });
-  const DATA_RANGE = 50;
   useEffect(() => {
     if (!fetching && data?.getSymptomDataByUser.data) {
       const sorted = data.getSymptomDataByUser.data.sort(
@@ -49,13 +47,6 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
       );
       const datas = sorted.map((x) => [x.timestamp, x.value]);
       setSymptomData(datas);
-
-      const _range =
-        new Date(datas[datas.length - 1][0]).getTime() -
-        (datas.length - DATA_RANGE < 0
-          ? new Date(datas[0][0]).getTime()
-          : new Date(datas[datas.length - DATA_RANGE][0]).getTime());
-      setRange(-1 * _range);
     }
     setIsLoading(false);
   }, [fetching, data]);
@@ -101,7 +92,6 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
               },
               xaxis: {
                 type: "datetime",
-                range: range,
               },
               stroke: {
                 curve: "smooth",

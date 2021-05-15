@@ -26,6 +26,7 @@ import {
   getSymptomName,
 } from "../utils/createExceptionDisplay";
 import { Symptoms } from "../utils/types";
+import { useIsAuth } from "../utils/useIsAuth";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -55,6 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 export const Notifications: React.FC = () => {
+  useIsAuth();
   const classes = useStyles();
   const [{ fetching, data }, reGetExceptions] = useGetExceptionsQuery();
   const [, readException] = useReadExceptionMutation();
@@ -62,12 +64,24 @@ export const Notifications: React.FC = () => {
   const [readedExceptions, setReadedExceptions] = useState<Exception[]>();
 
   useEffect(() => {
-    if (data?.getExceptions.length != 0) {
-      const readed = data?.getExceptions.filter((x) => x.readStatus);
-      const notReaded = data?.getExceptions.filter((x) => !x.readStatus);
-      setNotReadedExceptions(notReaded);
-      setReadedExceptions(readed);
+    if (data) {
+      if (data?.getExceptions.length != 0) {
+        const readed = data?.getExceptions.filter((x) => x.readStatus);
+        const notReaded = data?.getExceptions.filter((x) => !x.readStatus);
+        setNotReadedExceptions(notReaded);
+        setReadedExceptions(readed);
+      } else {
+        Swal.fire({
+          icon: "info",
+          title: "There is no notifications yet",
+          footer: "Epsilon Inc. COVID-19 Symptom Tracking",
+          backdrop: false,
+          allowOutsideClick: false,
+          confirmButtonText: "OK",
+        });
+      }
     }
+    console.log("D", notReadedExceptions);
   }, [fetching, data]);
 
   if (fetching || !data) {
@@ -81,7 +95,7 @@ export const Notifications: React.FC = () => {
   return (
     <NavBar>
       <div className={classes.root}>
-        {notReadedExceptions?.length != 0 && (
+        {notReadedExceptions && notReadedExceptions.length != 0 && (
           <div>
             <h1>New Notifications</h1>
             <Grid container spacing={3}>
@@ -106,7 +120,7 @@ export const Notifications: React.FC = () => {
                                   "Epsilon Inc. COVID-19 Symptom Tracking",
                               });
                               await readException({ id: exception.id });
-                              await reGetExceptions();
+                              reGetExceptions();
                             }}
                           >
                             <MoreVert />
