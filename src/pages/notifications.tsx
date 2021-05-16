@@ -81,7 +81,6 @@ export const Notifications: React.FC = () => {
         });
       }
     }
-    console.log("D", notReadedExceptions);
   }, [fetching, data]);
 
   if (fetching || !data) {

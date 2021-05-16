@@ -178,8 +178,6 @@ export const EnhancedTable: React.FC = () => {
 
   React.useEffect(() => {
     if (!fetching && data?.getAllSymptomDataByUser.symptoms) {
-      console.log(data.getAllSymptomDataByUser.symptoms);
-      console.log(typeof data.getAllSymptomDataByUser.symptoms[0].timestamp);
       setRows(
         data.getAllSymptomDataByUser.symptoms.map((x) => {
           return {
