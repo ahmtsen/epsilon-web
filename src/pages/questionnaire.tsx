@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
 import React, { useState } from "react";
+import { useHistory } from "react-router";
 import * as Survey from "survey-react";
 import Swal from "sweetalert2";
 import { Card } from "../components/Card";
@@ -48,13 +49,12 @@ export const Questionnaire: React.FC = () => {
   useIsAuth();
   const classes = useStyles();
   const [, createQuestionnaire] = useCreateQuestionnaireMutation();
-  const [
-    { fetching, data },
-    reExecQuery,
-  ] = useGetQuestionnaireDataByUserQuery();
+  const [{ fetching, data }, reExecQuery] =
+    useGetQuestionnaireDataByUserQuery();
   const [isNewQuestionnaire, setIsNewQuestionnaire] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const router = useHistory();
+
   const onComplete = async (survey: Survey.SurveyModel) => {
     setIsNewQuestionnaire(false);
     setIsLoading(true);
@@ -71,7 +71,6 @@ export const Questionnaire: React.FC = () => {
         result: result,
       },
     });
-    reExecQuery();
     setIsLoading(false);
     Swal.fire({
       icon: result ? "error" : "success",
@@ -83,6 +82,9 @@ export const Questionnaire: React.FC = () => {
       allowOutsideClick: false,
       backdrop: false,
       confirmButtonText: "OK",
+    }).then(() => {
+      reExecQuery();
+      router.replace("/dashboard");
     });
   };
   const model = new Survey.Model(questionnaireModel);
@@ -95,7 +97,6 @@ export const Questionnaire: React.FC = () => {
       </Backdrop>
     );
   }
-
   return (
     <NavBar>
       <Button

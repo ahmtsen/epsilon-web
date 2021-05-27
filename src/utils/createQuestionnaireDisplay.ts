@@ -25,9 +25,9 @@ export const createQuestionnaireDisplay = (answers: Questionnaire): string => {
     });
   }
 
-  if (answers.question3) {
+  if (answers.question3 != null) {
     body += "<p>Are you (they) feeling sick?</p>";
-    body += "<p>" + answers.question3 ? "Yes" : "No" + "</p>";
+    body += "<p>" + (answers.question3 === true ? "Yes" : "No") + "</p>";
   }
   if (answers.question4) {
     body += "<p>Do you (they) have any of the following symptoms?</p>";
@@ -46,7 +46,7 @@ export const createQuestionnaireDisplay = (answers: Questionnaire): string => {
   }
   if (answers.question6) {
     body +=
-      "<p>n the last two weeks, have you (they) attended or spent time in a group setting (for example school, dormitory, child care, sporting event)?</p>";
+      "<p>In the last two weeks, have you (they) attended or spent time in a group setting (for example school, dormitory, child care, sporting event)?</p>";
     body += "<p>" + answers.question6 ? "Yes" : "No" + "</p>";
   }
   return body;
