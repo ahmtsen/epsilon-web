@@ -1,5 +1,5 @@
 import { useHistory } from "react-router";
-import { ClientOptions, dedupExchange, Exchange, fetchExchange } from "urql";
+import { ClientOptions, Exchange, fetchExchange } from "urql";
 import { pipe, tap } from "wonka";
 
 const errorExchange: Exchange = ({ forward }) => (ops$) => {
@@ -21,6 +21,6 @@ export const createUrqlClient = (): ClientOptions => {
     fetchOptions: {
       credentials: "include" as const, // in order to send cookie to graphql server
     },
-    exchanges: [dedupExchange, errorExchange, fetchExchange],
+    exchanges: [errorExchange, fetchExchange],
   };
 };

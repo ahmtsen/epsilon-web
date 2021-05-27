@@ -50,32 +50,34 @@ export const Dashboard: React.FC = () => {
   const handleChange = (_: React.ChangeEvent<unknown>, newValue: number) => {
     setValue(newValue);
   };
-  const [thresholds, setThresholds] = useState<
-    ReturnType<typeof toThresholdMap>
-  >();
+  const [thresholds, setThresholds] =
+    useState<ReturnType<typeof toThresholdMap>>();
   const [isLoading, setIsLoading] = useState(true);
   const [{ fetching, data }] = useGetUserThresholdQuery();
-  const [{ data: me }] = useMeQuery();
+  const [{ data: me, fetching: meFetch }] = useMeQuery();
   const router = useHistory();
   const [shown, setShown] = useState(false);
+
   useEffect(() => {
-    if (me?.me?.questionnaireNeeded && !shown) {
-      setShown(true);
-      Swal.fire({
-        icon: "info",
-        title: "Daily Questionnaire",
-        text: "Please do not forget to answer daily questionnaire!",
-        footer: "Epsilon Inc. COVID-19 Symptom Tracking",
-        allowOutsideClick: false,
-        backdrop: false,
-        confirmButtonText: "ANSWER",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          router.push("/questionnaire");
-        }
-      });
+    if (!fetching && data) {
+      if (!meFetch && me?.me?.questionnaireNeeded === true && !shown) {
+        setShown(true);
+        Swal.fire({
+          icon: "info",
+          title: "Daily Questionnaire",
+          text: "Please do not forget to answer daily questionnaire!",
+          footer: "Epsilon Inc. COVID-19 Symptom Tracking",
+          allowOutsideClick: false,
+          backdrop: false,
+          confirmButtonText: "ANSWER",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            router.push("/questionnaire");
+          }
+        });
+      }
     }
-  }, [me]);
+  }, [me, meFetch, data, fetching]);
 
   useEffect(() => {
     if (!fetching) {

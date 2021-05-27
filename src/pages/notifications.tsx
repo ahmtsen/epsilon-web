@@ -60,25 +60,18 @@ export const Notifications: React.FC = () => {
   const classes = useStyles();
   const [{ fetching, data }, reGetExceptions] = useGetExceptionsQuery();
   const [, readException] = useReadExceptionMutation();
-  const [notReadedExceptions, setNotReadedExceptions] = useState<Exception[]>();
-  const [readedExceptions, setReadedExceptions] = useState<Exception[]>();
+  const [notReadedExceptions, setNotReadedExceptions] = useState<Exception[]>(
+    []
+  );
+  const [readedExceptions, setReadedExceptions] = useState<Exception[]>([]);
 
   useEffect(() => {
-    if (data) {
+    if (!fetching && data) {
       if (data?.getExceptions.length != 0) {
         const readed = data?.getExceptions.filter((x) => x.readStatus);
         const notReaded = data?.getExceptions.filter((x) => !x.readStatus);
         setNotReadedExceptions(notReaded);
         setReadedExceptions(readed);
-      } else {
-        Swal.fire({
-          icon: "info",
-          title: "There is no notifications yet",
-          footer: "Epsilon Inc. COVID-19 Symptom Tracking",
-          backdrop: false,
-          allowOutsideClick: false,
-          confirmButtonText: "OK",
-        });
       }
     }
   }, [fetching, data]);
