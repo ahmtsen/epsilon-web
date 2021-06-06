@@ -3,6 +3,7 @@ import {
   QuestionAnswer,
   Timeline,
   Toc,
+  AccountCircle,
 } from "@material-ui/icons";
 import React from "react";
 
@@ -26,5 +27,10 @@ export const routes = [
     name: "Notifications",
     icon: <Notifications />,
     href: "/notifications",
+  },
+  {
+    name: "Profile",
+    icon: <AccountCircle />,
+    href: "/profile",
   },
 ];

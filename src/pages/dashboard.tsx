@@ -89,9 +89,11 @@ export const Dashboard: React.FC = () => {
   }, [fetching, data]);
   if (isLoading || !thresholds) {
     return (
-      <Backdrop className={classes.backdrop} open={true}>
-        <CircularProgress size={150} color="inherit" />
-      </Backdrop>
+      <NavBar>
+        <Backdrop className={classes.backdrop} open={true}>
+          <CircularProgress size={150} color="inherit" />
+        </Backdrop>
+      </NavBar>
     );
   }
   return (

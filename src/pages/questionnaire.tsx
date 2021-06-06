@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
 import React, { useState } from "react";
-import { useHistory } from "react-router";
+// import { useHistory } from "react-router";
 import * as Survey from "survey-react";
 import Swal from "sweetalert2";
 import { Card } from "../components/Card";
@@ -53,7 +53,7 @@ export const Questionnaire: React.FC = () => {
     useGetQuestionnaireDataByUserQuery();
   const [isNewQuestionnaire, setIsNewQuestionnaire] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useHistory();
+  // const router = useHistory();
 
   const onComplete = async (survey: Survey.SurveyModel) => {
     setIsNewQuestionnaire(false);
@@ -84,7 +84,7 @@ export const Questionnaire: React.FC = () => {
       confirmButtonText: "OK",
     }).then(() => {
       reExecQuery();
-      router.replace("/dashboard");
+      // router.replace("/dashboard");
     });
   };
   const model = new Survey.Model(questionnaireModel);
@@ -92,9 +92,11 @@ export const Questionnaire: React.FC = () => {
 
   if (fetching || !data || isLoading) {
     return (
-      <Backdrop className={classes.backdrop} open={true}>
-        <CircularProgress size={150} color="inherit" />
-      </Backdrop>
+      <NavBar>
+        <Backdrop className={classes.backdrop} open={true}>
+          <CircularProgress size={150} color="inherit" />
+        </Backdrop>
+      </NavBar>
     );
   }
   return (

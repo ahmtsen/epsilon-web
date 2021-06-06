@@ -15,6 +15,7 @@ import { ValidateEmail } from "./pages/validate-email";
 import { createUrqlClient } from "./utils/createUrqlClient";
 import theme from "./utils/theme";
 import { Notifications } from "./pages/notifications";
+import { Profile } from "./pages/profile";
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -50,6 +51,9 @@ const App: React.FC = () => {
             </Route>
             <Route path="/notifications">
               <Notifications />
+            </Route>
+            <Route path="/profile">
+              <Profile />
             </Route>
             <Route path="*">
               <PageNotFound />

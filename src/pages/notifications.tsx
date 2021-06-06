@@ -78,9 +78,11 @@ export const Notifications: React.FC = () => {
 
   if (fetching || !data) {
     return (
-      <Backdrop className={classes.backdrop} open={true}>
-        <CircularProgress size={150} color="inherit" />
-      </Backdrop>
+      <NavBar>
+        <Backdrop className={classes.backdrop} open={true}>
+          <CircularProgress size={150} color="inherit" />
+        </Backdrop>
+      </NavBar>
     );
   }
 

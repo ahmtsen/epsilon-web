@@ -100,7 +100,7 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
               tooltip: {
                 x: {
                   format:
-                    symptom === "cough" ? "dd MMM yyyy" : "dd MMM yyyy hh:mm",
+                    symptom === "cough" ? "dd MMM yyyy" : "dd MMMM yyyy HH:mm",
                 },
                 y: {
                   formatter: function (value: string) {
