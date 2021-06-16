@@ -50,8 +50,7 @@ export const ChangePassword: React.FC = () => {
               Swal.fire({
                 icon: "success",
                 title: "Password Changed",
-                text:
-                  "Your password successfuly changed. You can now login with your new password!",
+                text: "Your password successfuly changed. You can now login with your new password!",
                 footer: "Epsilon Inc. COVID-19 Symptom Tracking",
                 allowOutsideClick: false,
                 confirmButtonText: "OK",
