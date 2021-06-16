@@ -23,7 +23,9 @@ import { TabPanel } from "../components/TabPanel";
 import { useGetUserThresholdQuery, useMeQuery } from "../generated/graphql";
 import { toThresholdMap } from "../utils/toThresholdMap";
 import { useIsAuth } from "../utils/useIsAuth";
+import { io } from "socket.io-client";
 
+const socket = io("http://localhost:5000");
 function a11yProps(index: number) {
   return {
     id: `scrollable-force-tab-${index}`,
@@ -53,11 +55,17 @@ export const Dashboard: React.FC = () => {
   const [thresholds, setThresholds] =
     useState<ReturnType<typeof toThresholdMap>>();
   const [isLoading, setIsLoading] = useState(true);
+  const [refresh, setRefresh] = useState<number>(0);
   const [{ fetching, data }] = useGetUserThresholdQuery();
   const [{ data: me, fetching: meFetch }] = useMeQuery();
   const router = useHistory();
   const [shown, setShown] = useState(false);
-
+  useEffect(() => {
+    socket.on("data", () => {
+      setRefresh(Math.random() * 100);
+      console.log("data getted", "refresh is", refresh);
+    });
+  }, []);
   useEffect(() => {
     if (!fetching && data) {
       if (!meFetch && me?.me?.questionnaireNeeded === true && !shown) {
@@ -135,6 +143,7 @@ export const Dashboard: React.FC = () => {
             title="Temperature"
             symptom="temperature"
             unit="°C"
+            refresh={refresh}
             thresholds={thresholds.temperature}
           />
         </TabPanel>
@@ -143,6 +152,7 @@ export const Dashboard: React.FC = () => {
             title="Heart Rate"
             symptom="heartRate"
             unit="bpm"
+            refresh={refresh}
             thresholds={thresholds.heartRate}
           />
         </TabPanel>
@@ -151,6 +161,7 @@ export const Dashboard: React.FC = () => {
             title="Blood Oxygen"
             symptom="bloodOxygen"
             unit="%"
+            refresh={refresh}
             thresholds={thresholds.bloodOxygen}
           />
         </TabPanel>
@@ -159,6 +170,7 @@ export const Dashboard: React.FC = () => {
             title="Cough Count"
             symptom="cough"
             unit="coughs/day"
+            refresh={refresh}
             thresholds={thresholds.cough}
           />
         </TabPanel>

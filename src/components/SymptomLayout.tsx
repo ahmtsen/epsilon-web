@@ -3,9 +3,8 @@ import {
   CircularProgress,
   Container,
   createStyles,
-  Grid,
-  makeStyles,
-  Theme,
+  Grid, makeStyles,
+  Theme
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useGetSymptomDataByUserQuery } from "../generated/graphql";
@@ -16,6 +15,7 @@ interface SymptomLayoutProps {
   title: string;
   unit: string;
   thresholds: number[];
+  refresh: number;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,13 +32,18 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
   title,
   unit,
   thresholds,
+  refresh,
 }) => {
   const classes = useStyles();
   const [symptomData, setSymptomData] = useState<unknown[][]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [{ fetching, data }] = useGetSymptomDataByUserQuery({
+  const [{ fetching, data }, re] = useGetSymptomDataByUserQuery({
     variables: { symptom: symptom },
   });
+  useEffect(() => {
+    re({ requestPolicy: "network-only" });
+    console.log("Regetting data");
+  }, [refresh]);
   useEffect(() => {
     if (!fetching && data?.getSymptomDataByUser.data) {
       const sorted = data.getSymptomDataByUser.data.sort(
@@ -49,7 +54,7 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
       setSymptomData(datas);
     }
     setIsLoading(false);
-  }, [fetching, data]);
+  }, [fetching, data, refresh]);
 
   if (isLoading) {
     return (
