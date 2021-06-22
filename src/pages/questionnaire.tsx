@@ -5,7 +5,7 @@ import {
   createStyles,
   Grid,
   makeStyles,
-  Theme
+  Theme,
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
 import React, { useState } from "react";
@@ -16,7 +16,7 @@ import { Card } from "../components/Card";
 import { NavBar } from "../components/NavBar";
 import {
   useCreateQuestionnaireMutation,
-  useGetQuestionnaireDataByUserQuery
+  useGetQuestionnaireDataByUserQuery,
 } from "../generated/graphql";
 import { getQuestionnaireResult } from "../utils/getQuestionnaireResult";
 import { questionnaireModel } from "../utils/questionnaireModel";
@@ -83,7 +83,9 @@ export const Questionnaire: React.FC = () => {
       backdrop: false,
       confirmButtonText: "OK",
     }).then(() => {
-      reExecQuery();
+      reExecQuery({
+        requestPolicy: "network-only",
+      });
       // router.replace("/dashboard");
     });
   };

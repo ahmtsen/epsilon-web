@@ -63,7 +63,6 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     socket.on("data", () => {
       setRefresh(Math.random() * 100);
-      console.log("data getted", "refresh is", refresh);
     });
   }, []);
   useEffect(() => {

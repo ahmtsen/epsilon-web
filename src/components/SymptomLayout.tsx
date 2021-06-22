@@ -3,8 +3,9 @@ import {
   CircularProgress,
   Container,
   createStyles,
-  Grid, makeStyles,
-  Theme
+  Grid,
+  makeStyles,
+  Theme,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useGetSymptomDataByUserQuery } from "../generated/graphql";
@@ -42,7 +43,6 @@ const SymptomLayout: React.FC<SymptomLayoutProps> = ({
   });
   useEffect(() => {
     re({ requestPolicy: "network-only" });
-    console.log("Regetting data");
   }, [refresh]);
   useEffect(() => {
     if (!fetching && data?.getSymptomDataByUser.data) {

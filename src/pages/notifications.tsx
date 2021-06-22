@@ -114,7 +114,9 @@ export const Notifications: React.FC = () => {
                                   "Epsilon Inc. COVID-19 Symptom Tracking",
                               });
                               await readException({ id: exception.id });
-                              reGetExceptions();
+                              reGetExceptions({
+                                requestPolicy: "network-only",
+                              });
                             }}
                           >
                             <MoreVert />
