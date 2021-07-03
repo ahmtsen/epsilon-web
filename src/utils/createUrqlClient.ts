@@ -17,7 +17,7 @@ const errorExchange: Exchange = ({ forward }) => (ops$) => {
 };
 export const createUrqlClient = (): ClientOptions => {
   return {
-    url: process.env.REACT_APP_GRAPHQL_ORIGIN as string,
+    url: process.env.REACT_APP_SERVER_ORIGIN + "/graphql",
     fetchOptions: {
       credentials: "include" as const, // in order to send cookie to graphql server
     },

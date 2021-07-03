@@ -21,6 +21,7 @@ import {
 import { getQuestionnaireResult } from "../utils/getQuestionnaireResult";
 import { questionnaireModel } from "../utils/questionnaireModel";
 import { useIsAuth } from "../utils/useIsAuth";
+import {isMobile} from 'react-device-detect';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -100,6 +101,52 @@ export const Questionnaire: React.FC = () => {
         </Backdrop>
       </NavBar>
     );
+  }
+  if(isMobile)
+  {
+    return (
+      <NavBar>
+        {!isNewQuestionnaire && <>
+          <Button
+          size="large"
+          startIcon={<Create />}
+          variant="contained"
+          color="primary"
+          onClick={() => setIsNewQuestionnaire(true)}
+        >
+          New Questionnaire
+        </Button>
+        <div className={classes.root}>
+          <Grid container spacing={3}>
+            {data.getQuestionnaireDataByUser.questionnaires
+              ? data.getQuestionnaireDataByUser.questionnaires.map(
+                  (questionnaire) => {
+                    return (
+                      <Grid item lg={3} key={questionnaire.id}>
+                        <Card
+                          result={questionnaire.result}
+                          timestamp={new Date(parseInt(questionnaire.timestamp))}
+                          answers={questionnaire}
+                        />
+                      </Grid>
+                    );
+                  }
+                )
+              : null}
+          </Grid>
+        </div></>}
+        {isNewQuestionnaire && (
+          <div className="survey-main">
+            <Survey.Survey
+            model={model}
+            onComplete={onComplete}
+            isExpanded={true}
+          />
+          </div>
+          
+        )}
+      </NavBar>
+    )
   }
   return (
     <NavBar>

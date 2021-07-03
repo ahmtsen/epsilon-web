@@ -1,3 +1,18 @@
 .sv_window {
-  transform: scale(1.5) translateX(-16%) translateY(-16%) !important;
+  transform: scale(1.5)  translateX(-16%) translateY(-16%) !important;
+  /* translateX(-16%) translateY(-16%) */
+  /* text-justify: auto !important; */
+  
+  /* word-wrap: break-word !important; */
+}
+.sv_row{
+  /* max-width: 10 !important; */
+}
+.survey-main{
+  margin-top: 20px;
+  max-width: 350px;
+}
+
+.sv_q{
+  max-width: 350px !important;
 }

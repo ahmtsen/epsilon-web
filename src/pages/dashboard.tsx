@@ -24,8 +24,9 @@ import { useGetUserThresholdQuery, useMeQuery } from "../generated/graphql";
 import { toThresholdMap } from "../utils/toThresholdMap";
 import { useIsAuth } from "../utils/useIsAuth";
 import { io } from "socket.io-client";
+import {isMobile} from 'react-device-detect'
 
-const socket = io("http://localhost:5000");
+const socket = io(process.env.REACT_APP_SERVER_ORIGIN);
 function a11yProps(index: number) {
   return {
     id: `scrollable-force-tab-${index}`,
@@ -100,6 +101,82 @@ export const Dashboard: React.FC = () => {
         <Backdrop className={classes.backdrop} open={true}>
           <CircularProgress size={150} color="inherit" />
         </Backdrop>
+      </NavBar>
+    );
+  }
+  if(isMobile)
+  {
+    return (
+      <NavBar>
+        <div className={classes.root}>
+          <AppBar position="static" color="default">
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              centered
+            >
+              <Tab
+                label="Body Temp"
+                icon={<FontAwesomeIcon size="2x" icon={faTemperatureLow} />}
+                {...a11yProps(0)}
+              />
+              <Tab
+                label="Heart Rate"
+                icon={<FontAwesomeIcon size="2x" icon={faHeartbeat} />}
+                {...a11yProps(1)}
+              />
+              <Tab
+                label="Blood Oxygen"
+                icon={<FontAwesomeIcon size="2x" icon={faTint} />}
+                {...a11yProps(2)}
+              />
+              <Tab
+                label="Cough Count"
+                icon={<FontAwesomeIcon size="2x" icon={faHeadSideCough} />}
+                {...a11yProps(3)}
+              />
+            </Tabs>
+          </AppBar>
+          <TabPanel value={value} index={0}>
+            <SymptomLayout
+              title="Temperature"
+              symptom="temperature"
+              unit="°C"
+              refresh={refresh}
+              thresholds={thresholds.temperature}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <SymptomLayout
+              title="Heart Rate"
+              symptom="heartRate"
+              unit="bpm"
+              refresh={refresh}
+              thresholds={thresholds.heartRate}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <SymptomLayout
+              title="Blood Oxygen"
+              symptom="bloodOxygen"
+              unit="%"
+              refresh={refresh}
+              thresholds={thresholds.bloodOxygen}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <SymptomLayout
+              title="Cough Count"
+              symptom="cough"
+              unit="coughs/day"
+              refresh={refresh}
+              thresholds={thresholds.cough}
+            />
+          </TabPanel>
+        </div>
       </NavBar>
     );
   }

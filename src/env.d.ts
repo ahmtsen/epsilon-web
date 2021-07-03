@@ -1,5 +1,5 @@
 declare namespace NodeJS {
-  interface ProcessEnv {
-    REACT_APP_GRAPHQL_ORIGIN: string;
-  }
+	interface ProcessEnv {
+		REACT_APP_SERVER_ORIGIN: string;
+	}
 }

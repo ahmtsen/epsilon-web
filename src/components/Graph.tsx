@@ -12,7 +12,7 @@ const Graph: React.FC<GraphProps> = ({ options, series }) => {
     <Card>
       <Divider />
       <Box>
-        <Chart options={options} series={series} type="line" height={740} />
+        <Chart options={options} series={series} type="line" height={550} />
       </Box>
     </Card>
   );

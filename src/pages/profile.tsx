@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "#fff",
     },
     table: {
-      maxWidth: 300,
+      maxWidth: 350,
     },
   })
 );
